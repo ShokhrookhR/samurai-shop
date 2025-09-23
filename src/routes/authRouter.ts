@@ -1,18 +1,23 @@
 import {Router} from 'express';
 import {UserService} from '../domain';
+import {JWTService} from '../application/jwtService';
 
 export const getAuthRoutes = () => {
   const authRouter = Router();
   const userService = new UserService();
+  const jwtService = new JWTService();
   authRouter
     .post('/login', async (req, res) => {
-      console.log('Auth routes');
-      const isValid = await userService.checkCredentials(req.body);
-      if (!isValid) {
-        res.sendStatus(404);
+      const user = await userService.checkCredentials(req.body);
+      if (!user) {
+        res.sendStatus(401);
         return;
       }
-      res.sendStatus(200);
+      const token = jwtService.createJWT({
+        userId: user._id,
+        username: user.username,
+      });
+      res.send(token);
     })
     .post('/register', async (req, res) => {
       const createdUser = await userService.createUser(req.body);

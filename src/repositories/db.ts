@@ -7,6 +7,7 @@ const myShopDB = client.db('myShop');
 export const productsCollectionWrite =
   myShopDB.collection<IProduct>('products');
 export const authCollection = myShopDB.collection('users');
+export const feedbackCollection = myShopDB.collection('feedbacks');
 export const productCollectionRead =
   myShopDB.collection<IDBProduct>('products');
 export async function runDB() {

@@ -1,3 +1,4 @@
+import {ObjectId} from 'mongodb';
 import {authCollection} from './db';
 interface IUser {
   username: string;
@@ -20,6 +21,10 @@ export class UserRepository {
     });
 
     return foundUser;
+  }
+  async findById(id: ObjectId) {
+    const {ObjectId} = require('mongodb');
+    return await this.collection.findOne({_id: new ObjectId(id)});
   }
   async createUser(newUser: IUser) {
     const foundUser = await this.findUserByUsernameOrEmail({

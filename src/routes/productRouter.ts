@@ -43,7 +43,12 @@ export const getProductRoutes = () => {
       // }),
       inputValidationMiddleware,
       async (req: Request<{}, IClubInputBodyModel>, res: Response) => {
-        const createdProduct = await productsService.createProduct(req.body);
+        console.log(req.user);
+        debugger;
+        const createdProduct = await productsService.createProduct(
+          req.body,
+          req.user!._id
+        );
         if (!createdProduct) {
           res.sendStatus(400);
           return;

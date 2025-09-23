@@ -1,5 +1,10 @@
 import express, {NextFunction, Request, Response} from 'express';
-import {getAuthRoutes, getClubRoutes, getProductRoutes} from './routes';
+import {
+  getAuthRoutes,
+  getClubRoutes,
+  getProductRoutes,
+  getFeedbackRoutes,
+} from './routes';
 import {runDB} from './repositories/db';
 const app = express();
 const PORT = 3000;
@@ -23,6 +28,7 @@ app.get('/', (req, res) => {
 app.use('/clubs', getClubRoutes());
 app.use('/products', getProductRoutes());
 app.use('/auth', getAuthRoutes());
+app.use('/feedbacks', getFeedbackRoutes());
 
 const startApp = async () => {
   await runDB();

@@ -44,11 +44,15 @@ export class ProductRepository {
 
     return foundProduct;
   }
-  async createProduct(newProduct: IProduct): Promise<IProduct | null> {
-    const insertDoc: OptionalId<IProduct> = {
+  async createProduct(
+    newProduct: IProduct,
+    userId: string
+  ): Promise<IProduct | null> {
+    const insertDoc: OptionalId<any> = {
       id: newProduct.id,
       title: newProduct.title,
       price: newProduct.price,
+      userId,
     };
     await this.collectionWrite.insertOne(insertDoc);
 

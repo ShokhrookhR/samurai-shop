@@ -1,3 +1,4 @@
+import {ObjectId} from 'mongodb';
 import {UserRepository} from '../repositories/userRepository';
 import bcrypt from 'bcrypt';
 
@@ -17,7 +18,12 @@ export class UserService {
       usernameOrEmail,
     });
     if (!foundUser) return false;
-    return await bcrypt.compare(password, foundUser?.passwordHash);
+    const isValid = await bcrypt.compare(password, foundUser?.passwordHash);
+
+    if (!isValid) {
+      return null;
+    }
+    return foundUser;
   }
   async createUser({
     username,
@@ -37,6 +43,9 @@ export class UserService {
       createdAt: new Date(),
     };
     return await this.repository.createUser(newUser);
+  }
+  async findUserById(userId: ObjectId) {
+    return await this.repository.findById(userId);
   }
   async _hashPassword(password: string, saltRounds: number): Promise<string> {
     return await bcrypt.hash(password, saltRounds);

@@ -19,13 +19,16 @@ export class ProductService {
 
     return foundProduct;
   }
-  async createProduct(payload: IProduct): Promise<IProduct | null> {
+  async createProduct(
+    payload: IProduct,
+    userId: string
+  ): Promise<IProduct | null> {
     const newProduct = {
       id: +new Date(),
       title: payload.title,
       price: payload.price,
     };
-    await this.repository.createProduct(newProduct);
+    await this.repository.createProduct(newProduct, userId);
     return newProduct;
   }
 }
