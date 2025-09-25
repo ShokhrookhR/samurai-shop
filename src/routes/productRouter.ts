@@ -13,6 +13,8 @@ export const getProductRoutes = () => {
   productsRouter
     .get('/', async (req: Request<{}, {}, {}, IProductInputModel>, res) => {
       const allProducts = await productsService.findProducts(req.query);
+      console.log(req.ip);
+
       res.send(allProducts);
     })
     .get('/:id', async (req: Request<{id: string}>, res) => {
@@ -43,8 +45,6 @@ export const getProductRoutes = () => {
       // }),
       inputValidationMiddleware,
       async (req: Request<{}, IClubInputBodyModel>, res: Response) => {
-        console.log(req.user);
-        debugger;
         const createdProduct = await productsService.createProduct(
           req.body,
           req.user!._id
@@ -53,7 +53,7 @@ export const getProductRoutes = () => {
           res.sendStatus(400);
           return;
         }
-        res.status(201).send(createdProduct);
+        res.send(createdProduct);
       }
     );
   return productsRouter;

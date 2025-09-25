@@ -4,8 +4,11 @@ import {
   getClubRoutes,
   getProductRoutes,
   getFeedbackRoutes,
+  getEmailRoutes,
 } from './routes';
 import {runDB} from './repositories/db';
+import dotenv from 'dotenv';
+dotenv.config();
 const app = express();
 const PORT = 3000;
 let requestCounter = 0;
@@ -29,6 +32,7 @@ app.use('/clubs', getClubRoutes());
 app.use('/products', getProductRoutes());
 app.use('/auth', getAuthRoutes());
 app.use('/feedbacks', getFeedbackRoutes());
+app.use('/email', getEmailRoutes());
 
 const startApp = async () => {
   await runDB();

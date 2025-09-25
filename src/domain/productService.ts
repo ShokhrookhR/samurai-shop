@@ -23,12 +23,6 @@ export class ProductService {
     payload: IProduct,
     userId: string
   ): Promise<IProduct | null> {
-    const newProduct = {
-      id: +new Date(),
-      title: payload.title,
-      price: payload.price,
-    };
-    await this.repository.createProduct(newProduct, userId);
-    return newProduct;
+    return await this.repository.createProduct(payload, userId);
   }
 }

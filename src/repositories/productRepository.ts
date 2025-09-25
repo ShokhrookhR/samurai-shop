@@ -56,7 +56,7 @@ export class ProductRepository {
     };
     await this.collectionWrite.insertOne(insertDoc);
 
-    return newProduct;
+    return insertDoc;
   }
   private mapToProduct(dbObject: IDBProduct): IProduct {
     return {
