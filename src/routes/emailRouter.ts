@@ -3,12 +3,6 @@ import nodemailer from 'nodemailer';
 export const getEmailRoutes = () => {
   const router = Router();
   router.post('/send', async (req, res) => {
-    // res.send({
-    //   email: req.body.email,
-    //   subject: req.body.subject,
-    //   message: req.body.message,
-    // });
-    // res.sendStatus(200);
     const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
