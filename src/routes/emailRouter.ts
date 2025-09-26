@@ -1,6 +1,7 @@
 import {Router} from 'express';
 import nodemailer from 'nodemailer';
 import {EmailService} from '../domain';
+import {HTTP_STATUSES} from '../constants/httpStatuses';
 export const getEmailRoutes = () => {
   const router = Router();
   const emailService = new EmailService();
@@ -8,7 +9,7 @@ export const getEmailRoutes = () => {
     const sentEmail = await emailService.sendPasswordRecoveryEmail();
 
     if (!sentEmail) {
-      res.status(401).send('Email not sent');
+      res.status(HTTP_STATUSES.NOT_FOUND_404).send('Email not sent');
       return;
     }
     res.send('Email sent successfully');
