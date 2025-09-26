@@ -1,8 +1,8 @@
 import {Response, Router, type Request} from 'express';
 import {body, checkSchema, query} from 'express-validator';
-import {IClubInputBodyModel, IProductInputModel} from '~/models';
-import {authMiddleware, inputValidationMiddleware} from '~/middlewares';
-import {ProductService} from '~/domain';
+import {IClubInputBodyModel, IProductInputModel} from '../models';
+import {authMiddleware, inputValidationMiddleware} from '../middlewares';
+import {ProductService} from '../domain';
 
 export const getProductRoutes = () => {
   const productsRouter = Router();
