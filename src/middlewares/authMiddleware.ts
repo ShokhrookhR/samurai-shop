@@ -1,6 +1,6 @@
 import {NextFunction, Request, Response} from 'express';
 import {JWTService} from '../application/jwtService';
-import {UserService} from '../domain';
+import {AuthService} from '../domain';
 
 export const authMiddleware = async (
   req: Request,
@@ -14,12 +14,12 @@ export const authMiddleware = async (
     return;
   }
   const jwtService = new JWTService();
-  const userService = new UserService();
+  const authService = new AuthService();
   const userId = jwtService.getUserIdByToken(token);
   if (!userId) {
     return res.sendStatus(401);
   }
-  const user = await userService.findUserById(userId);
+  const user = await authService.findUserById(userId);
   if (!user) {
     res.sendStatus(401);
     return;

@@ -3,6 +3,7 @@ import {body, checkSchema, query} from 'express-validator';
 import {IClubInputBodyModel, IProductInputModel} from '../models';
 import {authMiddleware, inputValidationMiddleware} from '../middlewares';
 import {ProductService} from '../domain';
+import {HTTP_STATUSES} from '../constants/httpStatuses';
 
 export const getProductRoutes = () => {
   const productsRouter = Router();
@@ -11,7 +12,6 @@ export const getProductRoutes = () => {
   productsRouter
     .get('/', async (req: Request<{}, {}, {}, IProductInputModel>, res) => {
       const allProducts = await productsService.findProducts(req.query);
-      console.log(req.ip);
 
       res.send(allProducts);
     })
@@ -20,7 +20,7 @@ export const getProductRoutes = () => {
         +req.params.id
       );
       if (!foundProduct) {
-        res.sendStatus(404);
+        res.sendStatus(HTTP_STATUSES.NOT_FOUND_404);
         return;
       }
       res.send(foundProduct);
@@ -48,7 +48,7 @@ export const getProductRoutes = () => {
           req.user!._id
         );
         if (!createdProduct) {
-          res.sendStatus(400);
+          res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400);
           return;
         }
         res.send(createdProduct);

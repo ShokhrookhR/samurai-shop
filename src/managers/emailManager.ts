@@ -1,3 +1,4 @@
+import {IUser} from '../types/user';
 import {EmailAdapter} from '../adapters';
 
 export class EmailManager {
@@ -11,5 +12,12 @@ export class EmailManager {
     message: string
   ) {
     return await this.emailAdapter.sendEmail(to, subject, message);
+  }
+  async sendEmailConfirmationMessage(user: IUser) {
+    return await this.emailAdapter.sendEmail(
+      user.accountData.email,
+      user.emailConfirmation.confirmationCode,
+      'Please confirm your email'
+    );
   }
 }

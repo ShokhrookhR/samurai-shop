@@ -1,4 +1,4 @@
-import {IDBProduct, IProduct} from '../types/product';
+import {IDBProduct, IProduct, IUser} from '../types';
 import {MongoClient} from 'mongodb';
 
 const mongoURI = process.env.MONGO_URI || 'mongodb://localhost:27017';
@@ -6,7 +6,7 @@ const client = new MongoClient(mongoURI);
 const myShopDB = client.db('myShop');
 export const productsCollectionWrite =
   myShopDB.collection<IProduct>('products');
-export const authCollection = myShopDB.collection('users');
+export const userCollection = myShopDB.collection<IUser>('users');
 export const feedbackCollection = myShopDB.collection('feedbacks');
 export const productCollectionRead =
   myShopDB.collection<IDBProduct>('products');
