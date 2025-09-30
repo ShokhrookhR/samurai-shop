@@ -29,7 +29,7 @@ export class UserRepository {
       'emailConfirmation.confirmationCode': code,
     });
   }
-  async createUser(newUser: IUser): Promise<WithId<IUser> | null> {
+  async createUser(newUser: IUser): Promise<IUser | null> {
     const foundUser = await this.findUserByUsernameOrEmail({
       usernameOrEmail: newUser.accountData.username,
     });

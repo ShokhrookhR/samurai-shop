@@ -19,7 +19,7 @@ export const getAuthRoutes = () => {
         userId: user._id,
         username: user.accountData.username,
       });
-      res.send({token});
+      res.send({accessToken: token});
     })
     .post(
       '/confirm-email',
