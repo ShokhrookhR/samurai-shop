@@ -24,6 +24,7 @@ export class AuthService {
       usernameOrEmail,
     });
     if (!foundUser) return false;
+    if (!foundUser.emailConfirmation.isConfirmed) return false;
     const isValid = await bcrypt.compare(
       password,
       foundUser?.accountData.passwordHash

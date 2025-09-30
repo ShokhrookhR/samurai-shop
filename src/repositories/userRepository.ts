@@ -13,7 +13,10 @@ export class UserRepository {
     usernameOrEmail: string;
   }) {
     const foundUser = await this.collection.findOne({
-      $or: [{username: usernameOrEmail}, {email: usernameOrEmail}],
+      $or: [
+        {'accountData.username': usernameOrEmail},
+        {'accountData.email': usernameOrEmail},
+      ],
     });
 
     return foundUser;
