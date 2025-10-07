@@ -12,8 +12,12 @@ export const getProductRoutes = () => {
   productsRouter
     .get('/', async (req: Request<{}, {}, {}, IProductInputModel>, res) => {
       const allProducts = await productsService.findProducts(req.query);
+      console.log(req.get('User-Agent'));
 
-      res.send(allProducts);
+      res.send({
+        ...allProducts,
+        deviceName: req.get('User-Agent'),
+      });
     })
     .get('/:id', async (req: Request<{id: string}>, res) => {
       const foundProduct = await productsService.findProductById(

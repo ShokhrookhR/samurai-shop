@@ -19,8 +19,6 @@ export class ProductRepository {
       filter.title = {$regex: query.title};
     }
     const productsCount = await this.collectionRead.countDocuments();
-    console.log(query.sortBy === 'asc' ? 1 : -1);
-    console.log(this.calculateSkip(+query.page, +query.size));
 
     const productsFromDB = await this.collectionRead
       .find(filter)
