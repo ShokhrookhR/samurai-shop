@@ -2,7 +2,7 @@ import {IAuthInputModel} from '../models/authInputModel';
 import {Router, Request, Response} from 'express';
 import {AuthService} from '../domain';
 import {JWTService} from '../application/jwtService';
-import {HTTP_STATUSES} from '../constants/httpStatuses';
+import {HTTP_STATUSES} from '../constants';
 
 export const getAuthRoutes = () => {
   const authRouter = Router();

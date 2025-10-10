@@ -1,7 +1,7 @@
 import {Router} from 'express';
 import nodemailer from 'nodemailer';
 import {EmailService} from '../domain';
-import {HTTP_STATUSES} from '../constants/httpStatuses';
+import {HTTP_STATUSES} from '../constants';
 export const getEmailRoutes = () => {
   const router = Router();
   const emailService = new EmailService();

@@ -3,7 +3,7 @@ import {body, checkSchema, query} from 'express-validator';
 import {IClubInputBodyModel, IProductInputModel} from '../models';
 import {authMiddleware, inputValidationMiddleware} from '../middlewares';
 import {ProductService} from '../domain';
-import {HTTP_STATUSES} from '../constants/httpStatuses';
+import {HTTP_STATUSES} from '../constants';
 
 export const getProductRoutes = () => {
   const productsRouter = Router();
@@ -13,6 +13,7 @@ export const getProductRoutes = () => {
     .get('/', async (req: Request<{}, {}, {}, IProductInputModel>, res) => {
       const allProducts = await productsService.findProducts(req.query);
       console.log(req.get('User-Agent'));
+      console.log(req.socket.remoteAddress);
 
       res.send({
         ...allProducts,
