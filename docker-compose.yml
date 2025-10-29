@@ -18,3 +18,6 @@ services:
       - "${MONGO_PORT}:${MONGO_PORT}"
     volumes:
       - ${DATA_PATH}:/data/db
+      - mongo_data:/data/db
+volumes:
+  mongo_data:

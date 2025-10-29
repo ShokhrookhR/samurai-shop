@@ -6,7 +6,7 @@
   "license": "ISC",
   "description": "",
   "scripts": {
-    "dev": "nodemon --inspect dist/index.js",
+    "dev": "nodemon --inspect --exitcrash dist/index.js",
     "tsc-watch": "tsc -w",
     "build": "tsc",
     "ext": "ts,js,json",
