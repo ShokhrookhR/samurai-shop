@@ -2,6 +2,7 @@ import {IProductViewModel} from '../models';
 import {IProductInputModel} from '../models/productInputModel';
 import {ProductRepository} from '../repositories/productRepository';
 import {IProduct} from '../types';
+import {ObjectId} from 'mongodb';
 
 // import {productsCollection} from './db';
 
@@ -24,7 +25,7 @@ export class ProductService {
 
     async createProduct(
         payload: IProduct,
-        userId: string
+        userId: ObjectId
     ): Promise<IProduct | null> {
         return await this.repository.createProduct(payload, userId);
     }

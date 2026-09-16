@@ -1,6 +1,6 @@
 import nodemailer from 'nodemailer';
 export class EmailAdapter {
-  async sendEmail(to: string, subject: string, message: string): Promise<any> {
+  async sendEmail(to: string, subject: string, message: string) {
     const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
@@ -14,11 +14,6 @@ export class EmailAdapter {
       subject,
       html: message,
     };
-    try {
-      return await transporter.sendMail(emailOptions);
-    } catch (error) {
-      console.log(error);
-      return false;
-    }
+    return await transporter.sendMail(emailOptions);
   }
 }

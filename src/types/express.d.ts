@@ -3,8 +3,10 @@ import 'express';
 import {IUser} from './user';
 import {WithId} from 'mongodb';
 
-declare module 'express-serve-static-core' {
-  interface Request {
-    user?: IUser | WithId;
+declare global {
+  namespace Express {
+    interface Request {
+      user?: WithId<IUser>;
+    }
   }
 }

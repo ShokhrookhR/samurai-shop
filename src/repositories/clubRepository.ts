@@ -8,11 +8,11 @@ interface IClub {
 }
 const db: IDB = {
   clubs: [
-    {id: 1, name: 'Manchester United', url: 'https://www.manutd.com/'},
-    {id: 2, name: 'PSG', url: 'https://www.kuku.com/'},
-    {id: 3, name: 'Chicago Bulls', url: 'https://www.kuku.com/'},
-    {id: 4, name: 'LA Lakers', url: 'https://www.kuku.com/'},
-    {id: 5, name: 'Westham United', url: 'https://www.kuku.com/'},
+    { id: 1, name: "Manchester United", url: "https://www.manutd.com/" },
+    { id: 2, name: "PSG", url: "https://www.kuku.com/" },
+    { id: 3, name: "Chicago Bulls", url: "https://www.kuku.com/" },
+    { id: 4, name: "LA Lakers", url: "https://www.kuku.com/" },
+    { id: 5, name: "Westham kuku United", url: "https://www.kuku.com/" },
   ],
 };
 export class ClubRepository {
@@ -20,9 +20,7 @@ export class ClubRepository {
   async findClubs(name?: string): Promise<IClub[]> {
     let foundClubsQuery = db.clubs;
     if (name) {
-      foundClubsQuery = db.clubs.filter(
-        (club) => club.name.indexOf(name) !== -1
-      );
+      foundClubsQuery = db.clubs.filter((club) => club.name.indexOf(name) !== -1);
     }
     return foundClubsQuery;
   }

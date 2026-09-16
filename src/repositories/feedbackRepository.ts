@@ -2,7 +2,7 @@ import {IProductViewModel} from '../models';
 import {IProductInputModel} from '../models/productInputModel';
 import {IProduct, IDBProduct} from '../types';
 import {feedbackCollection} from './db';
-import {OptionalId, WithId} from 'mongodb';
+import {ObjectId, OptionalId, WithId} from 'mongodb';
 export class FeedbackRepository {
   constructor() {
     this.collection = feedbackCollection;
@@ -65,7 +65,7 @@ export class FeedbackRepository {
   private calculateSkip(page: number, size: number) {
     return ((page || 1) - 1) * size;
   }
-  async addFeedback(message: string, userId: string) {
+  async addFeedback(message: string, userId: ObjectId) {
     const insertDoc: OptionalId<any> = {
       message,
       userId,

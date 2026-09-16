@@ -2,22 +2,37 @@ version: '3.8'
 services:
   app:
     build: .
+    env_file: .env
     container_name: samurai_app
     restart: always
     ports:
       - "${APP_PORT}:${APP_PORT}"
     environment:
-      - MONGO_URI=mongodb://mongo:${MONGO_PORT}
+      # Inside the compose network mongo always listens on its default port
+      - MONGO_URI=mongodb://mongo:27017
     depends_on:
       - mongo
+    # tsc recompiles synced sources into dist, nodemon restarts on dist changes
+    command: sh -c "pnpm run build && (pnpm run tsc-watch --preserveWatchOutput &) && pnpm run dev"
+    develop:
+      watch:
+        - action: sync
+          path: ./src
+          target: /app/src
+        - action: rebuild
+          path: package.json
+        - action: rebuild
+          path: pnpm-lock.yaml
+        - action: rebuild
+          path: Dockerfile
+        - action: rebuild
+          path: tsconfig.json
   mongo:
     image: mongo:latest
     container_name: samurai_mongo
     restart: always
     ports:
-      - "${MONGO_PORT}:${MONGO_PORT}"
+      # Bound to localhost only: the DB has no auth, don't expose it to the network
+      - "127.0.0.1:${MONGO_PORT}:27017"
     volumes:
       - ${DATA_PATH}:/data/db
-      - mongo_data:/data/db
-volumes:
-  mongo_data:

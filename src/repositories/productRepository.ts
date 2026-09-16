@@ -2,7 +2,10 @@ import {IProductViewModel} from '../models';
 import {IProductInputModel} from '../models/productInputModel';
 import {IProduct} from '../types';
 import {ProductModel} from './db';
-import {OptionalId} from 'mongodb';
+import {ObjectId} from 'mongodb';
+
+const DEFAULT_PAGE_SIZE = 10;
+const MAX_PAGE_SIZE = 100;
 
 export class ProductRepository {
     private model: typeof ProductModel;
@@ -15,18 +18,21 @@ export class ProductRepository {
     async findProducts(
         query: IProductInputModel
     ): Promise<IProductViewModel<IProduct>> {
-        const filter: any = {};
+        const filter: Record<string, unknown> = {};
 
         if (query.title) {
-            filter.title = {$regex: query.title};
+            filter.title = {$regex: this.escapeRegex(query.title), $options: 'i'};
         }
-        const productsCount = await this.model.countDocuments();
+        const page = this.toPositiveInt(query.page, 1);
+        const size = Math.min(this.toPositiveInt(query.size, DEFAULT_PAGE_SIZE), MAX_PAGE_SIZE);
+
+        const productsCount = await this.model.countDocuments(filter);
 
         const productsFromDB = await this.model
             .find(filter)
             .sort({title: query.sortBy === 'asc' ? 1 : -1})
-            .skip(this.calculateSkip(+query.page, +query.size))
-            .limit(+query.size)
+            .skip((page - 1) * size)
+            .limit(size)
             .lean();
         const mappedProducts = productsFromDB.map((product) => {
             return this.mapToProduct(product);
@@ -40,34 +46,40 @@ export class ProductRepository {
     }
 
     async findProductByUId(uid: string): Promise<IProduct | null> {
-        return this.model.findOne({_id: uid});
+        if (!ObjectId.isValid(uid)) {
+            return null;
+        }
+        const product = await this.model.findById(uid).lean();
+        return product ? this.mapToProduct(product) : null;
     }
 
     async createProduct(
         newProduct: IProduct,
-        userId: string
+        userId: ObjectId
     ): Promise<IProduct | null> {
-        const insertDoc: OptionalId<any> = {
-            id: newProduct.id,
+        const createdProduct = await this.model.create({
             title: newProduct.title,
             price: newProduct.price,
             userId,
-        };
-        await this.model.insertOne(insertDoc);
+        });
 
-        return insertDoc;
+        return this.mapToProduct(createdProduct);
     }
 
-    private mapToProduct(dbObject: any): IProduct {
+    private mapToProduct(dbObject: {_id: unknown; title: string; price: number}): IProduct {
         return {
-            id: dbObject.id,
-            uid: dbObject._id,
+            uid: String(dbObject._id),
             title: dbObject.title,
             price: dbObject.price,
         };
     }
 
-    private calculateSkip(page: number, size: number): number {
-        return ((page || 1) - 1) * size;
+    private toPositiveInt(value: unknown, fallback: number): number {
+        const parsed = Number(value);
+        return Number.isInteger(parsed) && parsed > 0 ? parsed : fallback;
+    }
+
+    private escapeRegex(value: string): string {
+        return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     }
 }

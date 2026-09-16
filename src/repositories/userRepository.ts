@@ -25,17 +25,31 @@ export class UserRepository {
     });
   }
 
-  async createUser(newUser: IUser): Promise<IUser | null> {
-    const foundUser = await this.findUserByUsernameOrEmail({
-      usernameOrEmail: newUser.accountData.username,
+  async createUser(newUser: IUser): Promise<WithId<IUser> | null> {
+    const foundUser = await this.collection.exists({
+      $or: [
+        { "accountData.username": newUser.accountData.username },
+        { "accountData.email": newUser.accountData.email },
+      ],
     });
 
     if (foundUser) {
       return null;
     }
-    await this.collection.insertOne(newUser);
+    try {
+      const createdUser = await this.collection.create(newUser);
+      return createdUser.toObject();
+    } catch (error) {
+      // Unique index violation: a concurrent request registered the same username/email
+      if (error instanceof Error && "code" in error && error.code === 11000) {
+        return null;
+      }
+      throw error;
+    }
+  }
 
-    return newUser as WithId<IUser>;
+  async deleteById(id: ObjectId) {
+    return await this.collection.deleteOne({ _id: id });
   }
 
   async updateConfirmation(userId: ObjectId) {

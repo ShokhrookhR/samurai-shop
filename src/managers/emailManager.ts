@@ -6,18 +6,13 @@ export class EmailManager {
     this.emailAdapter = new EmailAdapter();
   }
   private emailAdapter: EmailAdapter;
-  async sendPasswordRecoveryMessage(
-    to: string,
-    subject: string,
-    message: string
-  ) {
-    return await this.emailAdapter.sendEmail(to, subject, message);
-  }
   async sendEmailConfirmationMessage(user: IUser) {
+    const {confirmationCode} = user.emailConfirmation;
     return await this.emailAdapter.sendEmail(
       user.accountData.email,
-      user.emailConfirmation.confirmationCode,
-      'Please confirm your email'
+      'Please confirm your email',
+      `<h1>Thanks for your registration</h1>
+       <p>Your confirmation code: <b>${confirmationCode}</b></p>`
     );
   }
 }

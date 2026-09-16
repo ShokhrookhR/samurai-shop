@@ -1,15 +1,14 @@
+// Must be the first import: modules below read process.env at import time
+import 'dotenv/config';
 import express, {NextFunction, Request, Response} from 'express';
 import {
     getAuthRoutes,
     getClubRoutes,
     getProductRoutes,
     getFeedbackRoutes,
-    getEmailRoutes,
 } from './routes';
 import {runDB} from './repositories/db';
-import dotenv from 'dotenv';
 
-dotenv.config();
 const app = express();
 const PORT = process.env.APP_PORT || 3000;
 let requestCounter = 0;
@@ -33,7 +32,6 @@ app.use('/clubs', getClubRoutes());
 app.use('/products', getProductRoutes());
 app.use('/auth', getAuthRoutes());
 app.use('/feedbacks', getFeedbackRoutes());
-app.use('/email', getEmailRoutes());
 
 const startApp = async () => {
     await runDB();
@@ -41,4 +39,7 @@ const startApp = async () => {
         console.log(`Server is running on port:${PORT}`);
     });
 };
-startApp();
+startApp().catch((error) => {
+    console.error('Failed to start app', error);
+    process.exit(1);
+});
