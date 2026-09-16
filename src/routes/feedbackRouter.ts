@@ -1,6 +1,7 @@
 import {FeedbackService} from '../domain';
 import {Router} from 'express';
 import {authMiddleware} from '../middlewares';
+import {HTTP_STATUSES} from '../constants';
 
 export const getFeedbackRoutes = () => {
   const router = Router();
@@ -12,10 +13,10 @@ export const getFeedbackRoutes = () => {
       userId
     );
     if (!feedback) {
-      res.status(400).send({message: 'Feedback not created'});
+      res.status(HTTP_STATUSES.BAD_REQUEST_400).send({message: 'Feedback not created'});
       return;
     }
-    res.status(201).send(feedback);
+    res.status(HTTP_STATUSES.CREATED_201).send(feedback);
   });
   return router;
 };

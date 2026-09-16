@@ -1,10 +1,10 @@
 import { IUser } from "../types/user";
 import { ObjectId, WithId } from "mongodb";
-import { UserRepository } from "../repositories/userRepository";
+import { UserRepository } from "../repositories";
 import bcrypt from "bcrypt";
 import { v4 as uuidv4 } from "uuid";
 import { add } from "date-fns";
-import { EmailManager } from "../managers";
+import { EmailManager } from "../infra";
 
 export class AuthService {
   private repository: UserRepository;

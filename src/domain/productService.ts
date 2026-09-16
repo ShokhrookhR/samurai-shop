@@ -1,6 +1,6 @@
 import {IProductViewModel} from '../models';
 import {IProductInputModel} from '../models/productInputModel';
-import {ProductRepository} from '../repositories/productRepository';
+import {ProductRepository} from '../repositories';
 import {IProduct} from '../types';
 import {ObjectId} from 'mongodb';
 

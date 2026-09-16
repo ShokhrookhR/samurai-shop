@@ -1,16 +1,21 @@
 import {IUser} from '../types';
-import {MongoClient} from 'mongodb';
 import mongoose from 'mongoose'
 
 const mongoURI = process.env.MONGO_URI || 'mongodb://localhost:27017';
-const client = new MongoClient(mongoURI);
-const myShopDB = client.db('myShop');
-export const feedbackCollection = myShopDB.collection('feedbacks');
 
 const productsSchema = new mongoose.Schema({
     title: {type: String, required: true},
     price: {type: Number, required: true},
     userId: {type: mongoose.Schema.Types.ObjectId, ref: 'Users', required: true},
+});
+const clubsSchema = new mongoose.Schema({
+    name: {type: String, required: true},
+    url: {type: String, required: true},
+});
+const feedbackSchema = new mongoose.Schema({
+    message: {type: String, required: true},
+    userId: {type: mongoose.Schema.Types.ObjectId, ref: 'Users', required: true},
+    createdAt: {type: Date, required: true},
 });
 const userSchema = new mongoose.Schema<IUser>({
     accountData: {
@@ -23,6 +28,8 @@ const userSchema = new mongoose.Schema<IUser>({
 });
 export const ProductModel = mongoose.model('Products', productsSchema);
 export const UserModel = mongoose.model('Users', userSchema);
+export const ClubModel = mongoose.model('Clubs', clubsSchema);
+export const FeedbackModel = mongoose.model('Feedbacks', feedbackSchema);
 
 export async function runDB() {
     try {

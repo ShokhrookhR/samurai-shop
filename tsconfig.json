@@ -122,11 +122,6 @@
     "noUncheckedIndexedAccess": true,
     "outDir": "dist",
     "rootDir": "src",
-    "paths": {
-      "~/*": [
-        "./src/*"
-      ]
-    },
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "sourceMap": true,

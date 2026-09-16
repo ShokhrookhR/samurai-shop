@@ -4,3 +4,7 @@ export interface IProductInputModel {
   title?: string;
   sortBy?: 'asc' | 'desc';
 }
+export interface IProductInputBodyModel {
+  title: string;
+  price?: number;
+}

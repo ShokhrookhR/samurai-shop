@@ -1,6 +1,5 @@
 import {OptionalId} from 'mongodb';
 export type IUser = OptionalId<{
-  // _id?: string;
   accountData: IAccountData;
   emailConfirmation: IEmailConfirmation;
 }>;

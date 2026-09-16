@@ -1,5 +1,5 @@
 import {IUser} from '../types/user';
-import {EmailAdapter} from '../adapters';
+import {EmailAdapter} from './emailAdapter';
 
 export class EmailManager {
   constructor() {

@@ -1,7 +1,7 @@
 export interface IClubInputModel {
-  name: string;
-  title: string;
+  name?: string;
 }
 export interface IClubInputBodyModel {
   name: string;
+  url: string;
 }

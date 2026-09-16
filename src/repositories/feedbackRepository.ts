@@ -1,80 +1,34 @@
-import {IProductViewModel} from '../models';
-import {IProductInputModel} from '../models/productInputModel';
-import {IProduct, IDBProduct} from '../types';
-import {feedbackCollection} from './db';
-import {ObjectId, OptionalId, WithId} from 'mongodb';
+import {IFeedback} from '../types';
+import {FeedbackModel} from './db';
+import {ObjectId} from 'mongodb';
+
 export class FeedbackRepository {
-  constructor() {
-    this.collection = feedbackCollection;
-  }
-  private collection;
+    private model: typeof FeedbackModel;
 
-  // async findProducts(
-  //   query: IProductInputModel
-  // ): Promise<IProductViewModel<IProduct>> {
-  //   const filter: any = {};
-
-  //   if (query.title) {
-  //     filter.title = {$regex: query.title};
-  //   }
-  //   const productsCount = await this.collection.countDocuments();
-  //   const productsFromDB = await this.collection
-  //     .find(filter)
-  //     .sort({title: query.sortBy === 'asc' ? 1 : -1})
-  //     .skip(this.calculateSkip(+query.page, +query.size))
-  //     .limit(+query.size)
-  //     .toArray();
-  //   const mappedProducts = productsFromDB.map((product) => {
-  //     return this.mapToProduct(product);
-  //   });
-
-  //   const responseBody = {
-  //     data: mappedProducts,
-  //     totalCount: productsCount,
-  //   };
-
-  //   return responseBody;
-  // }
-  // async findProductById(id: number): Promise<IProduct | null> {
-  //   const foundProduct = await this.collection.findOne({id});
-
-  //   return foundProduct;
-  // }
-  // async createProduct(
-  //   newProduct: IProduct,
-  //   userId: string
-  // ): Promise<IProduct | null> {
-  //   const insertDoc: OptionalId<any> = {
-  //     id: newProduct.id,
-  //     title: newProduct.title,
-  //     price: newProduct.price,
-  //     userId,
-  //   };
-  //   await this.collection.insertOne(insertDoc);
-
-  //   return newProduct;
-  // }
-  // private mapToProduct(dbObject: IDBProduct): IProduct {
-  //   return {
-  //     id: dbObject.id,
-  //     uid: dbObject._id,
-  //     title: dbObject.title,
-  //     price: dbObject.price,
-  //   };
-  // }
-  private calculateSkip(page: number, size: number) {
-    return ((page || 1) - 1) * size;
-  }
-  async addFeedback(message: string, userId: ObjectId) {
-    const insertDoc: OptionalId<any> = {
-      message,
-      userId,
-      createdAt: new Date(),
-    };
-    const result = await this.collection.insertOne(insertDoc);
-    if (!result.acknowledged) {
-      return null;
+    constructor() {
+        this.model = FeedbackModel;
     }
-    return insertDoc;
-  }
+
+    async addFeedback(message: string, userId: ObjectId): Promise<IFeedback | null> {
+        const createdFeedback = await this.model.create({
+            message,
+            userId,
+            createdAt: new Date(),
+        });
+        return this.mapToFeedback(createdFeedback);
+    }
+
+    private mapToFeedback(dbObject: {
+        _id: unknown;
+        message: string;
+        userId: ObjectId;
+        createdAt: Date;
+    }): IFeedback {
+        return {
+            uid: String(dbObject._id),
+            message: dbObject.message,
+            userId: dbObject.userId,
+            createdAt: dbObject.createdAt,
+        };
+    }
 }

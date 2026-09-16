@@ -1,10 +1,9 @@
-export interface IAuthInputModel {
-  body: {
-    username: string;
-    email: string;
-    password: string;
-  };
-  query: {
-    code: string;
-  };
+export interface IRegisterInputModel {
+  username: string;
+  email: string;
+  password: string;
+}
+export interface ILoginInputModel {
+  usernameOrEmail: string;
+  password: string;
 }

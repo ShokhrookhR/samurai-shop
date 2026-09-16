@@ -1,8 +1,8 @@
 import {Response, Router, type Request} from 'express';
-import {body, checkSchema, query} from 'express-validator';
-import {IClubInputBodyModel, IProductInputModel} from '../models';
+import {checkSchema} from 'express-validator';
+import {IProductInputBodyModel, IProductInputModel} from '../models';
 import {authMiddleware, inputValidationMiddleware} from '../middlewares';
-import {ProductService} from "../domain";
+import {ProductService} from '../domain';
 import {HTTP_STATUSES} from '../constants';
 
 export const getProductRoutes = () => {
@@ -31,21 +31,21 @@ export const getProductRoutes = () => {
         .post(
             '/',
             authMiddleware,
-            // checkSchema({
-            //   name: {
-            //     trim: true,
-            //     isLength: {options: {min: 3, max: 30}},
-            //     isString: true,
-            //     errorMessage: {message: 'Name should be from 3 to 30 characters'},
-            //   },
-            //   url: {
-            //     trim: true,
-            //     isURL: true,
-            //     errorMessage: {message: 'Url should be correct'},
-            //   },
-            // }),
+            checkSchema({
+                title: {
+                    trim: true,
+                    isString: true,
+                    isLength: {options: {min: 3, max: 30}},
+                    errorMessage: {message: 'Title should be from 3 to 30 characters'},
+                },
+                price: {
+                    optional: true,
+                    isFloat: {options: {min: 0}},
+                    errorMessage: {message: 'Price should be a positive number'},
+                },
+            }),
             inputValidationMiddleware,
-            async (req: Request<{}, IClubInputBodyModel>, res: Response) => {
+            async (req: Request<{}, {}, IProductInputBodyModel>, res: Response) => {
                 const createdProduct = await productsService.createProduct(
                     req.body,
                     req.user!._id

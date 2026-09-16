@@ -1,43 +1,45 @@
-interface IDB {
-  clubs: IClub[];
-}
-interface IClub {
-  id: number;
-  name: string;
-  url: string;
-}
-const db: IDB = {
-  clubs: [
-    { id: 1, name: "Manchester United", url: "https://www.manutd.com/" },
-    { id: 2, name: "PSG", url: "https://www.kuku.com/" },
-    { id: 3, name: "Chicago Bulls", url: "https://www.kuku.com/" },
-    { id: 4, name: "LA Lakers", url: "https://www.kuku.com/" },
-    { id: 5, name: "Westham kuku United", url: "https://www.kuku.com/" },
-  ],
-};
+import {IClub} from '../types';
+import {ClubModel} from './db';
+import {ObjectId} from 'mongodb';
+
 export class ClubRepository {
-  constructor() {}
-  async findClubs(name?: string): Promise<IClub[]> {
-    let foundClubsQuery = db.clubs;
-    if (name) {
-      foundClubsQuery = db.clubs.filter((club) => club.name.indexOf(name) !== -1);
+    private model: typeof ClubModel;
+
+    constructor() {
+        this.model = ClubModel;
     }
-    return foundClubsQuery;
-  }
-  async findClubById(id: number): Promise<IClub | null> {
-    const foundClub = db.clubs.find((club) => club.id === id);
-    if (!foundClub) {
-      return null;
+
+    async findClubs(name?: string): Promise<IClub[]> {
+        const filter: Record<string, unknown> = {};
+        if (name) {
+            filter.name = {$regex: this.escapeRegex(name), $options: 'i'};
+        }
+        const clubsFromDB = await this.model.find(filter).lean();
+        return clubsFromDB.map((club) => this.mapToClub(club));
     }
-    return foundClub;
-  }
-  async createClub(name: string, url: string): Promise<IClub> {
-    const newClub = {
-      id: +new Date(),
-      name: name,
-      url: url,
-    };
-    db.clubs.push(newClub);
-    return newClub;
-  }
+
+    async findClubById(uid: string): Promise<IClub | null> {
+        if (!ObjectId.isValid(uid)) {
+            return null;
+        }
+        const club = await this.model.findById(uid).lean();
+        return club ? this.mapToClub(club) : null;
+    }
+
+    async createClub(name: string, url: string): Promise<IClub | null> {
+        const createdClub = await this.model.create({name, url});
+        return this.mapToClub(createdClub);
+    }
+
+    private mapToClub(dbObject: {_id: unknown; name: string; url: string}): IClub {
+        return {
+            uid: String(dbObject._id),
+            name: dbObject.name,
+            url: dbObject.url,
+        };
+    }
+
+    private escapeRegex(value: string): string {
+        return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    }
 }
