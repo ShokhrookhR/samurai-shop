@@ -1,27 +1,15 @@
-import {Response, Router, type Request} from 'express';
-import {IClubInputBodyModel, IClubInputModel} from '../models/clubInputModel';
+import {Router} from 'express';
 import {checkSchema} from 'express-validator';
 import {authMiddleware, inputValidationMiddleware} from '../middlewares';
-import {ClubService} from '../domain';
-import {HTTP_STATUSES} from '../constants';
+import {ClubController} from '../controllers';
 
 export const getClubRoutes = () => {
     const clubsRouter = Router();
-    const clubService = new ClubService();
+    const clubController = new ClubController();
 
     clubsRouter
-        .get('/', async (req: Request<{}, {}, {}, IClubInputModel>, res) => {
-            const allClubs = await clubService.findClubs(req.query.name);
-            res.send(allClubs);
-        })
-        .get('/:uid', async (req: Request<{uid: string}>, res) => {
-            const foundClub = await clubService.findClubByUId(req.params.uid);
-            if (!foundClub) {
-                res.sendStatus(HTTP_STATUSES.NOT_FOUND_404);
-                return;
-            }
-            res.send(foundClub);
-        })
+        .get('/', clubController.getClubs)
+        .get('/:uid', clubController.getClubByUId)
         .post(
             '/',
             authMiddleware,
@@ -39,17 +27,7 @@ export const getClubRoutes = () => {
                 },
             }),
             inputValidationMiddleware,
-            async (req: Request<{}, {}, IClubInputBodyModel>, res: Response) => {
-                const createdClub = await clubService.createClub(
-                    req.body.name,
-                    req.body.url
-                );
-                if (!createdClub) {
-                    res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400);
-                    return;
-                }
-                res.status(HTTP_STATUSES.CREATED_201).send(createdClub);
-            }
+            clubController.createClub
         );
     return clubsRouter;
 };

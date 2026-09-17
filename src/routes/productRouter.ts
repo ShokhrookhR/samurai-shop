@@ -1,33 +1,15 @@
-import {Response, Router, type Request} from 'express';
+import {Router} from 'express';
 import {checkSchema} from 'express-validator';
-import {IProductInputBodyModel, IProductInputModel} from '../models';
 import {authMiddleware, inputValidationMiddleware} from '../middlewares';
-import {ProductService} from '../domain';
-import {HTTP_STATUSES} from '../constants';
+import {ProductController} from '../controllers';
 
 export const getProductRoutes = () => {
     const productsRouter = Router();
-    const productsService = new ProductService();
+    const productController = new ProductController();
 
     productsRouter
-        .get('/', async (req: Request<{}, {}, {}, IProductInputModel>, res) => {
-            const allProducts = await productsService.findProducts(req.query);
-
-            res.send({
-                ...allProducts,
-                deviceName: req.get('User-Agent'),
-            });
-        })
-        .get('/:uid', async (req: Request<{ uid: string }>, res) => {
-            const foundProduct = await productsService.findProductByUId(
-                req.params.uid
-            );
-            if (!foundProduct) {
-                res.sendStatus(HTTP_STATUSES.NOT_FOUND_404);
-                return;
-            }
-            res.send(foundProduct);
-        })
+        .get('/', productController.getProducts)
+        .get('/:uid', productController.getProductByUId)
         .post(
             '/',
             authMiddleware,
@@ -45,17 +27,7 @@ export const getProductRoutes = () => {
                 },
             }),
             inputValidationMiddleware,
-            async (req: Request<{}, {}, IProductInputBodyModel>, res: Response) => {
-                const createdProduct = await productsService.createProduct(
-                    req.body,
-                    req.user!._id
-                );
-                if (!createdProduct) {
-                    res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400);
-                    return;
-                }
-                res.send(createdProduct);
-            }
+            productController.createProduct
         );
     return productsRouter;
 };
