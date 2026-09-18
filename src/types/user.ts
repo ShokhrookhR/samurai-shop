@@ -1,11 +1,11 @@
-import {OptionalId} from 'mongodb';
+import { OptionalId } from "mongodb";
 export type IUser = OptionalId<{
   accountData: IAccountData;
-  emailConfirmation: IEmailConfirmation;
+  // emailConfirmation: IEmailConfirmation;
 }>;
 interface IAccountData {
   username: string;
-  email: string;
+  // email: string;
   passwordHash: string;
   createdAt: Date;
 }

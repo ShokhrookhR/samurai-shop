@@ -1,6 +1,6 @@
-import {ObjectId, WithId} from 'mongodb';
-import {UserModel} from './db';
-import {IUser} from '../types';
+import { ObjectId, WithId } from "mongodb";
+import { UserModel } from "./db";
+import { IUser } from "../types";
 
 export class UserRepository {
   constructor() {
@@ -29,7 +29,7 @@ export class UserRepository {
     const foundUser = await this.collection.exists({
       $or: [
         { "accountData.username": newUser.accountData.username },
-        { "accountData.email": newUser.accountData.email },
+        // { "accountData.email": newUser.accountData.email },
       ],
     });
 

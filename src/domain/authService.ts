@@ -27,7 +27,7 @@ export class AuthService {
     });
 
     if (!foundUser) return false;
-    if (!foundUser.emailConfirmation.isConfirmed) return false;
+    // if (!foundUser.emailConfirmation.isConfirmed) return false;
     const isValid = await bcrypt.compare(password, foundUser?.accountData?.passwordHash);
 
     if (!isValid) {
@@ -38,11 +38,11 @@ export class AuthService {
 
   async createUser({
     username,
-    email,
+    // email,
     password,
   }: {
     username: string;
-    email: string;
+    // email: string;
     password: string;
   }) {
     const saltRounds = 10;
@@ -50,27 +50,27 @@ export class AuthService {
     const newUser = {
       accountData: {
         username,
-        email,
+        // email,
         passwordHash,
         createdAt: new Date(),
       },
-      emailConfirmation: {
-        confirmationCode: uuidv4(),
-        expirationDate: add(new Date(), { minutes: 3 }),
-        isConfirmed: false,
-      },
+      // emailConfirmation: {
+      //   confirmationCode: uuidv4(),
+      //   expirationDate: add(new Date(), { minutes: 3 }),
+      //   isConfirmed: false,
+      // },
     };
     const createdUser = await this.repository.createUser(newUser);
     if (!createdUser) return null;
 
-    try {
-      await this.emailManager.sendEmailConfirmationMessage(newUser);
-    } catch (error) {
-      // Roll back so the user can register again instead of being stuck unconfirmed
-      console.error("Failed to send confirmation email", error);
-      await this.repository.deleteById(createdUser._id);
-      return null;
-    }
+    // try {
+    //   await this.emailManager.sendEmailConfirmationMessage(newUser);
+    // } catch (error) {
+    //   // Roll back so the user can register again instead of being stuck unconfirmed
+    //   console.error("Failed to send confirmation email", error);
+    //   await this.repository.deleteById(createdUser._id);
+    //   return null;
+    // }
     return createdUser;
   }
 
@@ -90,9 +90,9 @@ export class AuthService {
     const user: WithId<IUser> | null = await this.findUserByCode(code);
 
     if (!user) return false;
-    if (user.emailConfirmation.isConfirmed) return false;
-    if (user.emailConfirmation.confirmationCode !== code) return false;
-    if (user.emailConfirmation.expirationDate < new Date()) return false;
+    // if (user.emailConfirmation.isConfirmed) return false;
+    // if (user.emailConfirmation.confirmationCode !== code) return false;
+    // if (user.emailConfirmation.expirationDate < new Date()) return false;
     await this.repository.updateConfirmation(user._id);
     return true;
   }
